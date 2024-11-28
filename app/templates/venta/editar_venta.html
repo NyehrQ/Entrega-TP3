@@ -1,0 +1,23 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Editar Venta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Editar Venta</h2>
+    
+    <form action="{{ url_for('venta.editar_venta', id_venta=venta.id) }}" method="POST">
+        <div class="form-group">
+            <label for="id">ID de Venta:</label>
+            <input type="text" class="form-control" id="id" name="id" value="{{ venta.id }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="idUsuario">ID de Usuario:</label>
+            <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="{{ venta.idUsuario }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Actualizar Venta</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Eliminar Venta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Eliminar Venta</h2>
+
+    <div class="alert alert-warning" role="alert">
+        ¿Estás seguro de que deseas eliminar la venta con ID: <strong>{{ venta.id }}</strong>? Esta acción no se puede deshacer.
+    </div>
+
+    <form action="{{ url_for('venta.eliminar_venta', id_venta=venta.id) }}" method="POST">
+        <button type="submit" class="btn btn-danger btn-block">Eliminar Venta</button>
+        <a href="{{ url_for('venta.ver_ventas') }}" class="btn btn-secondary btn-block">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

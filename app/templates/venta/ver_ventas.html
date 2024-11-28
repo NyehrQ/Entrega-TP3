@@ -1,0 +1,32 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Lista de Ventas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Lista de Ventas</h2>
+
+    <table class="table table-hover table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>ID Usuario</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.id }}</td>
+                <td>{{ venta.nombreUsuario }}</td>
+                <td>{{ venta.fecha }}</td>
+                <td>
+                     <a href="{{ url_for('venta.detalles_venta', id_venta=venta.id) }}" class="btn btn-sm btn-info">Ver detalles</a> 
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

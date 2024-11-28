@@ -1,0 +1,59 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Panel de Administración</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-between">
+                        <div>
+                            <i class="fas fa-users fa-3x mb-3" style="color:#007BFF;"></i>
+                            <h5 class="card-title">Gestionar Usuarios</h5>
+                            <p class="card-text">Administrar la lista de usuarios.</p>
+                        </div>
+                        <a href="{{ url_for('usuario.ver_usuarios') }}" class="btn btn-primary mt-auto">Ver Usuarios</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-between">
+                        <div>
+                            <i class="fas fa-chart-line fa-3x mb-3" style="color:#007BFF;"></i>
+                            <h5 class="card-title">Gestionar Ventas</h5>
+                            <p class="card-text">Monitorear las ventas realizadas.</p>
+                        </div>
+                        <a href="{{ url_for('venta.ver_ventas') }}" class="btn btn-primary mt-auto">Ver Ventas</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-between">
+                        <div>
+                            <i class="fas fa-cubes fa-3x mb-3" style="color:#007BFF;"></i>
+                            <h5 class="card-title">Gestionar Productos</h5>
+                            <p class="card-text">Administrar la lista de productos.</p>
+                        </div>
+                        <a href="{{ url_for('producto.ver_productos') }}" class="btn btn-primary mt-auto">Ver Productos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-between">
+                        <div>
+                            <i class="fas fa-chart-bar fa-3x mb-3" style="color:#007BFF;"></i>
+                            <h5 class="card-title">Estadísticas de Ventas</h5>
+                            <p class="card-text">Ver estadísticas detalladas de ventas.</p>
+                        </div>
+                        <a href="{{ url_for('venta.ver_estadisticas') }}" class="btn btn-primary mt-auto">Ver Estadísticas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

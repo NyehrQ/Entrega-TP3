@@ -1,0 +1,42 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Detalles de Venta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Detalles de La Venta</h2>
+    
+    {% if venta_detalle %}
+        <table class="table table-hover table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID Detalle</th>
+                    <th>ID de Venta</th>
+                    <th>ID de Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in venta_detalle %}
+                <tr>
+                    <td>{{ detalle.id }}</td>
+                    <td>{{ detalle.idVenta }}</td>
+                    <td>{{ detalle.nombre_producto }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.precio }}</td>
+                    <td>{{ detalle.subtotal }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-center text-danger">No se encontraron detalles para esta venta.</p>
+    {% endif %}
+    
+    <div class="text-right mt-3">
+        <a href="{{ url_for('venta.ver_ventas') }}" class="btn btn-secondary">Volver a Ventas</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex justify-content-center align-items-start" style="padding-top: 30px;">
+    <div class="col-md-6 col-12 text-center">
+        <img src="{{ url_for('static', filename='images/imagenGeneral.png') }}" alt="Imagen Login" class="img-fluid mb-3" style="max-width: 100%;">
+
+        <h2>Iniciar Sesión</h2>
+        <form method="POST" class="mx-auto mt-3" style="max-width: 400px;">
+            <div class="form-group">
+                <label for="usuario">Usuario:</label>
+                <input type="text" id="usuarioIngresado" name="usuarioIngresado" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasenaIngresada" name="contrasenaIngresada" class="form-control" required>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                <a href="{{ url_for('autenticacion.registro') }}" class="btn btn-secondary">Registrarse</a>
+            </div>
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-danger mt-3">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,47 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Lista de Productos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Lista de Productos</h2>
+
+    <div class="text-right mb-3">
+        <a href="{{ url_for('producto.agregar_producto') }}" class="btn btn-primary">Agregar Producto</a>
+    </div>
+
+    <table class="table table-hover table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Descripción</th>
+                <th>Nivel</th>
+                <th>Stock</th>
+                <th>Ruta de Imagen</th> <!-- Cambio: Mostrar la ruta de la imagen -->
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.precio }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.nivel }}</td>
+                <td>{{ producto.stock }}</td>
+                <td>{{ producto.imagen }}</td> 
+                <td>
+                    <a href="{{ url_for('producto.editar_producto', id_producto=producto.id) }}" class="btn btn-sm btn-warning">Editar</a>
+                    <form action="{{ url_for('producto.eliminar_producto', id_producto=producto.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

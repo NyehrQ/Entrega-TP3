@@ -1,0 +1,171 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Inicio - Tienda de Productos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Bienvenido a Nuestra Tienda</h2>
+
+    <div class="mb-3">
+        <label for="filtroPrecio" class="form-label">Filtrar por Precio:</label>
+        <select class="form-control" id="filtroPrecio">
+            <option value="0">Todos los precios</option>
+            <option value="1">Menos de $100</option>
+            <option value="2">$100 - $150</option>
+            <option value="3">Más de $150</option>
+        </select>
+    </div>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ url_for('inicio.ver_carrito') }}" class="btn btn-success position-relative mr-2" id="btnVerCarrito">
+            Ver Carrito
+            <span class="badge badge-danger position-absolute top-0 start-100 translate-middle" id="carritoCantidad" style="display: none;">0</span>
+        </a>
+        <a href="{{ url_for('wishlist.get_wishlist') }}" class="btn btn-primary" id="btnVerWishlist">
+            Ver WishList
+        </a>
+        <a href="{{ url_for('venta.ver_historial_ventas') }}" class="btn btn-info" id="btnHistorialVentas">
+            Historial de Ventas
+        </a>
+    </div>
+
+    <div class="row" id="productos">
+        {% for producto in productos %}
+        <div class="col-md-3 mb-4 producto" data-precio="{{ producto.precio }}">
+            <div class="card h-100">
+                <img src="{{ producto.imagen if producto.imagen else 'ruta/a/imagen_default.jpg' }}" 
+                     class="card-img-top" 
+                     alt="{{ producto.nombre }}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text">{{ producto.descripcion }}</p>
+                    <p class="card-text">Precio: ${{ producto.precio }}</p>
+                    <label for="cantidadProducto{{ producto.id }}">Cantidad:</label>
+                    <select class="form-control" id="cantidadProducto{{ producto.id }}">
+                        <option value="0">Seleccionar cantidad</option>
+                        {% for i in range(1, 6) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="mt-auto">
+                        <button class="btn btn-primary mt-3 agregar-carrito" data-id="{{ producto.id }}" data-precio="{{ producto.precio }}">
+                            <i class="fas fa-shopping-cart"></i> Agregar al Carrito
+                        </button>
+                    </div>
+                    <div class="mt-auto">
+                        <button class="btn btn-primary mt-3 agregar-wishlist" data-id="{{ producto.id }}">
+                            <i class="fas fa-heart"></i> Agregar a Wishlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function actualizarBadgeCarrito() {
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            const carritoCantidad = document.getElementById('carritoCantidad');
+            
+            if (carrito.length > 0) {
+                carritoCantidad.innerText = carrito.length;
+                carritoCantidad.style.display = 'inline'; 
+            } else {
+                carritoCantidad.style.display = 'none';
+            }
+        }
+
+        actualizarBadgeCarrito();
+
+        
+        const filtroPrecio = document.getElementById('filtroPrecio');
+        
+        filtroPrecio.addEventListener('change', function() {
+            const seleccion = filtroPrecio.value;
+            const productos = document.querySelectorAll('.producto');
+            
+            productos.forEach(function(producto) {
+                const precio = parseFloat(producto.getAttribute('data-precio'));
+
+                
+                if (
+                    (seleccion == "1" && precio < 100) ||
+                    (seleccion == "2" && precio >= 100 && precio <= 150) ||
+                    (seleccion == "3" && precio > 150) ||
+                    seleccion == "0" 
+                ) {
+                    producto.style.display = 'block';
+                } else {
+                    producto.style.display = 'none';
+                }
+            });
+        });
+
+        
+        document.querySelectorAll('.agregar-carrito').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const productoId = this.getAttribute('data-id');
+                const precioUnitario = parseFloat(this.getAttribute('data-precio'));
+                const cantidadSelect = document.getElementById('cantidadProducto' + productoId);
+                const cantidad = parseInt(cantidadSelect.value);
+
+                if (cantidad > 0) {
+                    const precioTotal = precioUnitario * cantidad;
+
+                    const productoSeleccionado = {
+                        nombre: document.querySelector(`#cantidadProducto${productoId}`).closest('.card-body').querySelector('.card-title').innerText,
+                        cantidad: cantidad,  
+                        id: productoId,
+                        precioUnitario: precioUnitario,
+                        precioTotal: precioTotal 
+                    };
+
+                    const carritoActual = JSON.parse(localStorage.getItem('carrito')) || [];
+                    carritoActual.push(productoSeleccionado);
+
+                    localStorage.setItem('carrito', JSON.stringify(carritoActual));
+                    alert('Producto agregado al carrito.');
+
+                    actualizarBadgeCarrito();
+                } else {
+                    alert('Por favor, selecciona una cantidad válida.');
+                }
+            });
+        });
+
+
+        document.querySelectorAll('.agregar-wishlist').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const productoId = this.getAttribute('data-id');
+
+                fetch('/wishlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ producto_id: productoId }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Error desconocido al agregar a la wishlist');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message || 'Producto agregado a la wishlist.');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(`Error: ${error.message}`);
+                });
+            });
+        });
+    });
+</script>
+
+{% endblock %}

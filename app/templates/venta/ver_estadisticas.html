@@ -1,0 +1,108 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Estadísticas de Ventas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Estadísticas de Ventas</h2>
+
+    <!-- Tarjetas resumen -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Total de Ventas</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ total_ventas }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Promedio de Ventas por Mes</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ promedio_ventas }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Última Venta</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ ultima_venta }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Ventas por Mes -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h4 class="text-center">Ventas por Mes</h4>
+            <canvas id="ventasPorMesChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Gráfico de Usuarios con Más Ventas -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h4 class="text-center">Usuarios con Más Ventas</h4>
+            <canvas id="usuariosMasVentasChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Agregar los gráficos usando Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('ventasPorMesChart').getContext('2d');
+    var ventasPorMesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: JSON.parse('{{ meses|tojson }}'),  // Uso de JSON.parse
+            datasets: [{
+                label: 'Ventas por Mes',
+                data: JSON.parse('{{ ventas_por_mes|tojson }}'),  // Uso de JSON.parse
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    var ctx2 = document.getElementById('usuariosMasVentasChart').getContext('2d');
+    var usuariosMasVentasChart = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: JSON.parse('{{ usuarios|tojson }}'),  // Uso de JSON.parse
+            datasets: [{
+                label: 'Usuarios con Más Ventas',
+                data: JSON.parse('{{ ventas_por_usuario|tojson }}'),  // Uso de JSON.parse
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        }
+    });
+</script>
+
+
+{% endblock %}

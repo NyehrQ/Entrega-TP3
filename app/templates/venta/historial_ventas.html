@@ -1,0 +1,42 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Historial de Ventas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Historial de Ventas</h2>
+
+    {% if historial %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Productos</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in historial %}
+            <tr>
+                <td>{{ item.venta.fecha }}</td>
+                <td>
+                    <ul>
+                        {% for detalle in item.detalles %}
+                        <li>
+                            {{ detalle.nombre_producto }} - {{ detalle.cantidad }} x ${{ detalle.precio }} = ${{ detalle.subtotal }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    ${{ item.detalles | sum(attribute='subtotal') }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-center">No tienes ventas registradas.</p>
+    {% endif %}
+</div>
+{% endblock %}

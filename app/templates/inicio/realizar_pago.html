@@ -1,0 +1,102 @@
+{% extends 'layoutDashboard.html' %}
+
+{% block title %}Realizar Pago{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Resumen del Carrito</h2>
+
+    <div id="resumenCarrito" class="row">
+        {% for producto in carrito %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="card-text">Cantidad: {{ producto.cantidad }}</p>
+                    <p class="card-text">Precio: ${{ producto.precioTotal }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h4 class="text-center">Total a Pagar: ${{ total }}</h4>
+
+    <div class="mt-4">
+        <h2 class="text-center mb-4">Formulario de Pago</h2>
+        <form id="formularioPago" method="POST" action="{{ url_for('inicio.procesar_pago') }}">
+            <div class="form-group">
+                <label for="nombreTarjeta">Nombre en la Tarjeta</label>
+                <input type="text" class="form-control" id="nombreTarjeta" name="nombreTarjeta" required>
+            </div>
+            <div class="form-group">
+                <label for="numeroTarjeta">Número de Tarjeta</label>
+                <input type="text" class="form-control" id="numeroTarjeta" name="numeroTarjeta" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="fechaExpiracion">Fecha de Expiración</label>
+                    <input type="text" class="form-control" id="fechaExpiracion" name="fechaExpiracion" placeholder="MM/AA" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="cvv">CVV</label>
+                    <input type="text" class="form-control" id="cvv" name="cvv" required>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button id="pagoBtn" type="submit" class="btn btn-success">Realizar Pago</button>
+            </div>
+
+            <!-- Loader (spinner) -->
+            <div id="loader" class="text-center mt-3" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Procesando pago...</span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('formularioPago').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Mostrar loader y deshabilitar botón
+        document.getElementById('loader').style.display = 'block';
+        document.getElementById('pagoBtn').disabled = true;
+
+        const formData = new FormData(this);
+
+        fetch('{{ url_for("inicio.procesar_pago") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => { throw new Error(data.message); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                localStorage.removeItem('carrito'); // Vaciar el carrito
+                alert('Pago procesado con éxito');
+                window.location.href = '/inicio'; // Redirigir al inicio o donde desees
+            } else {
+                alert('Hubo un problema al procesar el pago.');
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            // Ocultar loader y habilitar botón después del proceso
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('pagoBtn').disabled = false;
+        });
+    });
+</script>
+
+{% endblock %}
